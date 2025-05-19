@@ -4,7 +4,7 @@ import string
 import os
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
-import Rate_ai
+from Rate_ai import rate_roast
 
 USED_FILE = "used.txt"
 app = Flask(__name__, template_folder="templates", static_folder="static")
@@ -137,7 +137,7 @@ def get_random_room():
         return jsonify({"room_code": random.choice(rooms)})
     return jsonify({"error": "No rooms available"}), 404
 
-@app.route("/delete-room", methods=["POST"])
+
 @app.route("/delete-room", methods=["POST"])
 def delete_room():
     code = request.json.get("room_code")
@@ -155,6 +155,37 @@ def delete_room():
     # Save the updated room list
     if modified:
         with open(ROOMS_FILE, "w") as file:
+            for room in rooms:
+                file.write(room + "\n")
+        return jsonify({"message": "Room code deleted successfully"})
+    else:
+        return jsonify({"error": "Room not found"}), 404
+def load_room_codes1():
+    try:
+        if not os.path.exists(USED_FILE):
+            return []
+        with open(USED_FILE, "r") as file:
+            return [line.strip() for line in file.readlines()]
+    except Exception as e:
+        print(f"Error loading room codes: {e}")
+        return []
+@app.route("/delete-room1", methods=["POST"])
+def delete_room1():
+    code = request.json.get("room_code")
+    rooms = load_room_codes1()
+
+    # Remove both the normal code and the version that starts with "!"
+    modified = False
+    if code in rooms:
+        rooms.remove(code)
+        modified = True
+    if f"!{code}" in rooms:
+        rooms.remove(f"!{code}")
+        modified = True
+
+    # Save the updated room list
+    if modified:
+        with open(USED_FILE, "w") as file:
             for room in rooms:
                 file.write(room + "\n")
         return jsonify({"message": "Room code deleted successfully"})
@@ -275,12 +306,32 @@ def handle_player_data1(data):
 
     # Broadcasting both playerName and gameCode to all clients
     emit('receive_data1', {'playerName': player_name, 'gameCode': game_code,'Points': points}, broadcast=True, include_self=False)
+@socketio.on('player_data2')
+def handle_player_data2(data):
+    # Extracting both playerName and gameCode from the data
+    points = data.get('Points')
+    game_code = data.get('gameCode')  # Extract the gameCode (or code)
+
+    # Broadcasting both playerName and gameCode to all clients
+    emit('receive_data2', {'Points': points, 'gameCode': game_code}, broadcast=True, include_self=False)
 
 @app.route('/rate', methods=['POST'])
 def rate():
-    data = request.get_json()
-    roast = data.get('roast', '')
-    result = Rate_ai.rate_roast(roast)
-    return jsonify({'result': result})
+    try:
+        data = request.get_json()
+        roast = data.get('roast', '')
+        print("Received roast:", roast)
+
+        result = rate_roast(roast)
+        print("Roast score:", result)
+
+        return jsonify({'result': result})
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+
+#socketio.run(app, debug=True)

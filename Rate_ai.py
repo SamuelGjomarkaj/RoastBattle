@@ -29,7 +29,7 @@ Reply ONLY with four comma-separated numbers. No explanations.
 
     if len(numbers) != 4:
         print("Unexpected response format:", reply)
-        return None
+        return 5.0
 
     cleverness, burn, originality, funny = numbers
 
@@ -37,18 +37,9 @@ Reply ONLY with four comma-separated numbers. No explanations.
     weighted_sum = cleverness + burn * 2 + originality + funny
     average = round(weighted_sum / 5, 2)
 
-    return {
-        average
-    }
+    return average
 
 # 🔥 Example use:
-roast = ("You have a face that would make onions cry. ")
+roast = ("You are so stupid that when you did a blood test you thought A+ wass a grade")
 rating = rate_roast(roast)
-
-if rating:
-    print("Rating:")
-    print(f"  Cleverness:        {rating['cleverness']}")
-    print(f"  Burn Level:        {rating['burn']}")
-    print(f"  Originality:       {rating['originality']}")
-    print(f"  Funny:             {rating['funny']}")
-    print(f"  Weighted Average:  {rating['weighted_average']}")
+print (rating)

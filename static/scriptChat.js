@@ -8,7 +8,7 @@ let me = false;
 let opp = false;
 let code = path.split('/').pop();
 
-var socket = io("http://127.0.0.1:5000", {
+var socket = io("http://192.168.100.26:5000", {
         transports: ["websocket", "polling"]  // Ensure WebSocket and polling are allowed
     });
 var socketChat = io(`http://127.0.0.1:5000/Chat/${code}`, {
@@ -16,8 +16,8 @@ var socketChat = io(`http://127.0.0.1:5000/Chat/${code}`, {
 });
 
         // Listen for random_code event from server
-function score(roast){
-    fetch('http://localhost:5000/rate', {
+function score(roast, message){
+    fetch('/rate', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -27,17 +27,33 @@ function score(roast){
 .then(res => res.json())
 .then(data => {
     num = data.result;
+    let variation = 1 + (Math.random() * 0.2 - 0.1);
     if (num < 5) {
+        console.log(num)
         // Subtract 20 for each unit below 5
-        return num - (5 - num) * 20;
+        av = Math.ceil(((num - 5)*20)*variation);
+        givePoint('player',av);
+        socket.emit('player_data1', { playerName: message, gameCode: code, Points: av});
+    addMessage(message, 'user', playerName);
     } else if (num > 5) {
         // Add 20 for each unit above 5
-        return num + (num - 5) * 20;
+        console.log(num)
+        av = Math.ceil(((num - 5)*20)*variation);
+        givePoint('player',av);
+       socket.emit('player_data1', { playerName: message, gameCode: code, Points: av});
+    addMessage(message, 'user', playerName);
     } else {
         // If the number is exactly 5, no change
-        return num;
+        console.log(num)
+        av = Math.ceil(((num - 4.5)*20)*variation);
+        givePoint('player',av);
+       socket.emit('player_data1', { playerName: message, gameCode: code, Points: av});
+    addMessage(message, 'user', playerName);
     }
+
+
 });
+
 }
 function enterBattle() {
     const nickname = document.getElementById("nickname").value.trim();
@@ -70,14 +86,13 @@ socket.on('receive_data', function(data) {
 function sendRoast() {
     const input = document.getElementById("chat-input");
     const message = input.value.trim();
-    let points = score(input);
+
+    score(input.value, message)
     if (!message) return;
-    socket.emit('player_data1', { playerName: message, gameCode: code, Points: points});
-    addMessage(message, 'user', playerName);
-    input.value = "";
-
-   givePoint('player',points);
-
+input.disabled = true;
+document.getElementById('chat-input').placeholder = "Wait for the cooldown";
+enableInputAfter20Sec()
+//givePoint('player',points);
 
        // givePoint('opponent');
 
@@ -85,12 +100,24 @@ function sendRoast() {
 socket.on('receive_data1', function(data) {
     const mesage = data.playerName;
     const codes = data.gameCode;
+    const input = document.getElementById("chat-input");
     const points = data.Points
     let opponentname = document.getElementById("opponent-name").textContent;
     if (code === codes) {
 
         addMessage(mesage, 'opponent', opponentname);}
         givePoint('opponent', points);
+    input.disabled = false;
+    document.getElementById('chat-input').placeholder = "Type your roast...";
+   });
+socket.on('receive_data2', function(data) {
+    const codes = data.gameCode;
+    const points = data.Points
+    let opponentname = document.getElementById("opponent-name").textContent;
+    if (code === codes) {
+        givePoint('opponent', points);
+  }
+
    });
 
 function addMessage(text, sender, name) {
@@ -111,30 +138,42 @@ function addMessage(text, sender, name) {
 
 function givePoint(player, points) {
     let scoreElement;
-
+    const input = document.getElementById("chat-input");
     if (player === "player") {
         scoreElement = document.getElementById("player-score");
     } else {
         scoreElement = document.getElementById("opponent-score");
     }
 
+    input.value = "";
+let currentScore = parseInt(scoreElement.innerText);
 
-    let currentScore = parseInt(scoreElement.innerText);
+if (points < 0 && currentScore + points < 0) {
+    scoreElement.innerText = 0;
+} else {
     scoreElement.innerText = currentScore + points;
-
-    // Create floating point effect
-    const pointEffect = document.createElement("div");
+}
+const pointEffect = document.createElement("div");
+      if(points < 0){
+    pointEffect.innerText = `${points}`;
+    pointEffect.style.color = "red";
+    }
+    else{
     pointEffect.innerText = `+${points}`;
+    pointEffect.style.color = "gold";
+    }
+
+
     pointEffect.style.position = "absolute";
 
     // Randomize position near the score element
-    const offsetX = Math.random() * 60 - 30;  // Random X offset within -30 to 30 px
-    const offsetY = Math.random() * 60 - 30;  // Random Y offset within -30 to 30 px
+    const offsetX = Math.random() * 80 - 40;  // Random X offset within -30 to 30 px
+    const offsetY = Math.random() * 80 - 40;  // Random Y offset within -30 to 30 px
     pointEffect.style.left = scoreElement.offsetLeft + 10 + offsetX + "px";
     pointEffect.style.top = scoreElement.offsetTop - 10 + offsetY + "px";
 
-    pointEffect.style.color = "gold";
-    pointEffect.style.fontSize = "1.3rem";
+
+    pointEffect.style.fontSize = "1.9rem";
     pointEffect.style.fontWeight = "bold";
     pointEffect.style.opacity = "1";
     pointEffect.style.pointerEvents = "none";
@@ -145,7 +184,7 @@ function givePoint(player, points) {
     setTimeout(() => {
         pointEffect.style.opacity = "0";
         pointEffect.style.transform = "translateY(-25px)";
-    }, 50);
+    }, 100);
 
     setTimeout(() => {
         pointEffect.remove();
@@ -155,7 +194,7 @@ function givePoint(player, points) {
 
 
 function startTimer() {
-    let timeLeft = 30; // 5 minutes
+    let timeLeft = 300; // 5 minutes
     const timerDisplay = document.getElementById("timer");
 
     timerInterval = setInterval(() => {
@@ -169,6 +208,13 @@ function startTimer() {
         if (timeLeft < 0) {
             clearInterval(timerInterval);
             showWinner();
+            fetch('/delete-room1', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ room_code: code })  // Send room code as JSON in the request body
+            })
         }
     }, 1000);
 }
@@ -190,6 +236,16 @@ function showWinner() {
     popup.classList.remove("hidden");
 }
 
+ function enableInputAfter20Sec() {
+    const input = document.getElementById('chat-input');
+
+    setTimeout(() => {
+      if (input.disabled === false){
+          input.disabled = false;
+
+      document.getElementById('chat-input').placeholder = "Type your roast...";}
+    }, 20000); // 20 seconds
+  }
 // ✅ Press Enter to send message
 document.getElementById("chat-input").addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
