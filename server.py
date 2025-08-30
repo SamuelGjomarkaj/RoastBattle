@@ -13,7 +13,7 @@ from Rate_ai import generate_roast
 USED_FILE = "used.txt"
 app = Flask(__name__, template_folder="templates", static_folder="static")
 ROOMS_FILE = "rooms.txt"
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="gevent")
 CORS(app)
 room_notifications = {}
 def generate_room_code():
@@ -356,5 +356,6 @@ if __name__ == "__main__":
 
 
 #socketio.run(app, debug=True)
+
 
 
