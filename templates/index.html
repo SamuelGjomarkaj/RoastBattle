@@ -1,0 +1,101 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roast Battle Arena</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+</head>
+<body>
+<div class="background-animation"></div>
+<div class="container">
+    <h1>🔥 Roast Battle Arena 🔥</h1>
+    <p class="tagline">The ultimate battleground for the sharpest tongues! Are you ready?</p>
+    <button class="create-room" onclick="generateRoomCode()">Create Room</button>
+    <div class="input-group">
+
+        <button class="join-room" onclick="joinRoom()">Join with Code</button>
+    </div>
+    <button class="random-game" onclick="joinRandomRoom()">Join Random Game</button>
+    <button class="bot" onclick="bot()">Play Bot</button>
+    <button class="special-mode" onclick="openSpecialMode()">Special Modes</button>
+    <div class="footer">Made with 🔥 for the boldest roasters.</div>
+
+</div>
+
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <button class="close-btn" onclick="closePopup()">✖</button>
+        <h2>Room Created</h2>
+        <p>Your room code: <span id="room-code"></span></p>
+        <div class="public-room-container">
+            <label class="switch">
+                <input type="checkbox" id="public-room" class="public-room" onclick="togglePublicRoom()">
+                <span class="slider round"></span>
+            </label>
+            <span class="public-label">Make Public</span>
+        </div>
+        <div id="loading" class="loading">🔄 Searching for players...</div>
+        <div id="player-status"> <div class="player-container" id="players">
+            <img src="icon.png" alt="Player Icon" class="player-avatar"> Player Joined!
+            <!-- More players can be added dynamically here -->
+        </div></div>
+
+        <!-- Player Avatar Section -->
+        <button id="start-game" class="start-game" onclick="start()">Start Game</button>
+    </div>
+</div>
+
+<!-- Join Random Game Popup -->
+<div id="join-popup" class="popup">
+    <div class="popup-content">
+        <button class="close-btn" onclick="closeJoinPopup()">✖</button>
+        <h2>Joining Random Game</h2>
+        <div id="join-loading" class="loading">🔄 Searching for a room...</div>
+        <p id="join-room-code" style="display: none;">Room Code: <span id="random-room-code"></span></p>
+        <p id="waiting-message" style="display: none;">Waiting for creator to start...</p>
+    </div>
+</div>
+
+<!-- Join Room Popup -->
+<div id="join-room-popup" class="popup">
+    <div class="popup-content">
+        <button class="close-btn" onclick="closeJoinRoomPopup()">✖</button>
+        <h2>Join a Room</h2>
+        <input type="text" id="room-input" maxlength="6" placeholder="Enter Room Code">
+        <button onclick="attemptJoinRoom()">Join</button>
+        <div id="room-loading" class="loading" style="display: none;">🔄 Checking room...</div>
+        <p id="join-room-status" class="status-message"></p>
+        <p id="room-status" style="display: none; color: #facc15;"></p>
+    </div>
+</div>
+<div id="special-mode-popup" class="popup" style="display:none;">
+    <div class="popup-content">
+        <button class="close-btn" onclick="closeSpecialMode()">✖</button>
+        <h2>🔥 Special Modes 🔥</h2>
+        <button class="mode-option" onclick="startRoastOMeter()">Roast-o-Meter</button>
+    </div>
+</div>
+<div id="roastometer-popup" class="popup" style="display:none;">
+    <div class="popup-content">
+        <button class="close-btn" onclick="closeRoastOMeter()">✖</button>
+        <h2>🔥 Roast-o-Meter 🔥</h2>
+        <p>Write your roast and see how spicy it is!</p>
+        <textarea id="roast-input" placeholder="Type your roast here..." rows="4" style="width:90%; padding:10px; border-radius:8px; background:#111; color:white; border:2px solid #a020f0;"></textarea>
+        <br>
+        <button id="rateRoastBtn" class="mode-option" onclick="rateRoast()">Rate My Roast</button>
+        <p id="roast-score" style="margin-top:15px; font-size:1.5rem; color:#facc15; display:none;"></p>
+    </div>
+</div>
+
+<span id="codex"></span>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+<script src="script.js"></script>
+</body>
+</html>
+
+
