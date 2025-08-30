@@ -1,3 +1,6 @@
+import eventlet
+eventlet.monkey_patch()
+
 from flask import Flask, jsonify, request, render_template
 import random
 import string
@@ -353,4 +356,5 @@ if __name__ == "__main__":
 
 
 #socketio.run(app, debug=True)
+
 
