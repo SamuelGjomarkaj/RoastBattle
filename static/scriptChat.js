@@ -8,10 +8,10 @@ let me = false;
 let opp = false;
 let code = path.split('/').pop();
 let lastroast = "";
-var socket = io("http://192.168.100.26:5000", {
-        transports: ["websocket", "polling"]  // Ensure WebSocket and polling are allowed
-    });
-var socketChat = io(`http://127.0.0.1:5000/Chat/${code}`, {
+const socket = io("https://roast-battle.onrender.com", {
+  transports: ["websocket"], 
+});
+var socketChat = io(https://roast-battle.onrender.com/Chat/${code}`, {
     transports: ["websocket", "polling"]
 });
 
@@ -345,4 +345,5 @@ document.getElementById("chat-input").addEventListener("keydown", function (even
     if (event.key === "Enter") {
         sendRoast();
     }
+
 });
