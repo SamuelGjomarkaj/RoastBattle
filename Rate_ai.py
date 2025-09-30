@@ -11,10 +11,12 @@ USAGE_LIMIT = 50
 usage_counts = [0] * len(API_KEYS)
 current_key_index = 0
 
+MODEL_NAME = "gemini-2.5-flash-lite"  # cheaper and fully supported
+
 # Configure Gemini with current API key
 def configure_model(api_key):
     genai.configure(api_key=api_key)
-    return genai.GenerativeModel(model_name="gemini-1.5-flash")
+    return genai.GenerativeModel(MODEL_NAME)
 
 # Set up first model
 model = configure_model(API_KEYS[current_key_index])
@@ -80,5 +82,6 @@ Use clever wordplay or sarcasm.
         return f"Error generating roast: {e}"
 
 # 🔥 Example usage
+
 
 
