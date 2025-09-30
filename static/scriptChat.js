@@ -8,8 +8,8 @@ let me = false;
 let opp = false;
 let code = path.split('/').pop();
 let lastroast = "";
-const socket = io("https://roast-battle.onrender.com", {
-  transports: ["websocket"], 
+const socket = io({
+  transports: ["websocket", "polling"]
 });
 var socketChat = io(https://roast-battle.onrender.com/Chat/${code}`, {
     transports: ["websocket", "polling"]
@@ -347,3 +347,4 @@ document.getElementById("chat-input").addEventListener("keydown", function (even
     }
 
 });
+
