@@ -11,9 +11,6 @@ let lastroast = "";
 const socket = io({
   transports: ["websocket", "polling"]
 });
-var socketChat = io(https://roast-battle.onrender.com/Chat/${code}`, {
-    transports: ["websocket", "polling"]
-});
 
         // Listen for random_code event from server
 function score(roast, message){
@@ -347,4 +344,5 @@ document.getElementById("chat-input").addEventListener("keydown", function (even
     }
 
 });
+
 
