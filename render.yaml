@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: roast-battle
+    env: python
+    region: frankfurt         # or oregon, virginia etc. (choose closest to your users)
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn --worker-class eventlet -w 1 app:app"
+    plan: free                # or starter, standard etc.
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: PORT
+        value: 10000
