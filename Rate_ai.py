@@ -82,7 +82,5 @@ Use clever wordplay or sarcasm.
         return f"Error generating roast: {e}"
 
 # 🔥 Example usage
-roast = generate_roast("")
-print("🔥 Roast:", roast)
-rating = rate_roast(roast)
-print("📊 Roast Rating:", rating)
+
+
