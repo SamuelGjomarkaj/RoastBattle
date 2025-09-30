@@ -4,7 +4,7 @@ import re
 
 # Two Gemini API keys
 API_KEYS = [
-  AIzaSyB7x3Th-3mYNygWC6FMrsqlXq8_GQq0hy0
+  "AIzaSyB7x3Th-3mYNygWC6FMrsqlXq8_GQq0hy0"
 ]
 
 USAGE_LIMIT = 50
@@ -14,7 +14,8 @@ current_key_index = 0
 # Configure Gemini with current API key
 def configure_model(api_key):
     genai.configure(api_key=api_key)
-    return genai.GenerativeModel(model_name="gemini-1.5-flash")
+    return genai.GenerativeModel(model_name="models/gemini-1.5-flash")
+
 
 # Set up first model
 model = configure_model(API_KEYS[current_key_index])
@@ -80,6 +81,7 @@ Use clever wordplay or sarcasm.
         return f"Error generating roast: {e}"
 
 # 🔥 Example usage
+
 
 
 
