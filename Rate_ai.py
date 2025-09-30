@@ -4,9 +4,7 @@ import re
 
 # Two Gemini API keys
 API_KEYS = [
-    "AIzaSyDAfqZXmaXlAdmHCCtV_dG4KXvs1E4lr3o",
-    "AIzaSyDbPcSEgZ81Crwgs0rUGDW_9fkbMgmF9p0",
-    "AIzaSyCuDu_93qxS9-Pm-aQjWSWIWOXCEhJAy94"
+    "AIzaSyB7x3Th-3mYNygWC6FMrsqlXq8_GQq0hy0"
 ]
 
 USAGE_LIMIT = 50
@@ -82,7 +80,5 @@ Use clever wordplay or sarcasm.
         return f"Error generating roast: {e}"
 
 # 🔥 Example usage
-roast = generate_roast("")
-print("🔥 Roast:", roast)
-rating = rate_roast(roast)
-print("📊 Roast Rating:", rating)
+
+
