@@ -1,5 +1,5 @@
-const socket = io("https://roast-battle.onrender.com", {
-  transports: ["websocket"], 
+const socket = io({
+  transports: ["websocket", "polling"]
 });
 
 function generateCode() {
@@ -388,6 +388,7 @@ document.getElementById("roast-input").addEventListener("keydown", function(even
         rateRoast();
     }
 });
+
 
 
 
